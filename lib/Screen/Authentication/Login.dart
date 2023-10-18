@@ -267,6 +267,7 @@ class _LoginState extends State<Login> with TickerProviderStateMixin {
           balance = data["balance"];
           CUR_USERID = id!;
           CUR_USERNAME = username!;
+          RESTRAUNT_NAME= data['store_name'].toString();
           CUR_BALANCE = balance!;
           srorename = data[Storename] ?? "";
           storeurl = data[Storeurl] ?? "";

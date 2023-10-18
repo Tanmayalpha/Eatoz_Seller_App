@@ -190,6 +190,7 @@ class Product {
 class ProductModel {
   String? total;
   String? sales;
+  String? hsn;
   String? stockType;
   String? sub_category_id;
   String? isPricesInclusiveTax;
@@ -255,6 +256,7 @@ class ProductModel {
   int? selVarient;
   ProductModel(
       {this.total,
+        this.hsn,
       this.selVarient,
       this.sales,
       this.stockType,
@@ -322,6 +324,8 @@ class ProductModel {
 
   ProductModel.fromJson(Map<String, dynamic> json) {
     total = json['total'];
+    hsn = json['hsn_code'];
+
     sales = json['sales'];
     stockType = json['stock_type'];
     isPricesInclusiveTax = json['is_prices_inclusive_tax'];

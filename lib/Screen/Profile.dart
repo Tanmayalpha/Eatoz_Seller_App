@@ -469,7 +469,7 @@ class StateProfile extends State<Profile> with TickerProviderStateMixin {
     };
     var request =
         http.MultipartRequest('POST', Uri.parse('${baseUrl}update_user'));
-    print('____requestrequestrequestrequest_______${request.fields}____${request}______');
+
     request.fields.addAll({
       Id: CUR_USERID.toString(),
       Name: name ?? "",

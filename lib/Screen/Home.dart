@@ -227,7 +227,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       final jsonResponse = json.decode(finalResult);
 
       setState(() {
-        finalProductCount = jsonResponse['data'].length;
+        finalProductCount = jsonResponse['total'];
       });
       print("checking length of product ${finalProductCount}");
     } else {
@@ -1059,6 +1059,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
 //  => Drawer Header
 
   _getHeader() {
+
     return InkWell(
       child: Container(
         decoration: back(),
@@ -1072,7 +1073,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    CUR_USERNAME!,
+              RESTRAUNT_NAME!,// CUR_USERNAME!,
                     style: Theme.of(context)
                         .textTheme
                         .subtitle1!

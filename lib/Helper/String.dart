@@ -45,6 +45,7 @@ final Uri updateUserImage = Uri.parse(baseUrl + 'update_image');
 final String isLogin = '$appName+_islogin';
 String? CUR_USERID = '';
 String? CUR_USERNAME = "";
+String? RESTRAUNT_NAME = "";
 String CUR_CURRENCY = '';
 String CUR_BALANCE = '';
 String LOGO = '';
