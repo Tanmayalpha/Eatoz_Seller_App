@@ -301,6 +301,8 @@ class _MediaState extends State<Media> with TickerProviderStateMixin {
   }
 
   getMediaItem(int index) {
+    print(
+        "selected main image here ${productImage} and ${productImageUrl}");
     return Card(
       child: InkWell(
         onTap: () {
@@ -314,7 +316,7 @@ class _MediaState extends State<Media> with TickerProviderStateMixin {
               print(
                   "selected main image here ${productImage} and ${productImageUrl}");
               Navigator.pop(context);
-              setState(() {});
+             /* setState(() {});*/
             } else if (widget.from == "video") {
               uploadedVideoName =
                   mediaList[index].subDic! + "" + mediaList[index].name!;

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:eshopmultivendor/Model/ProductModel/Product.dart';
 import 'package:eshopmultivendor/Screen/addonEdit.dart';
@@ -112,6 +113,7 @@ class _EditProductState extends State<EditProduct>
   String? sortDescription; // short_description
   String? tags; // Tags
   String? discount;
+  String? hsn;
   String? discountDate;
   String? taxId; // Tax (pro_input_tax)
   String? indicatorValue; // indicator
@@ -200,6 +202,7 @@ class _EditProductState extends State<EditProduct>
   TextEditingController quantityStepSizeControlller = TextEditingController();
   TextEditingController madeInControlller = TextEditingController();
   TextEditingController discountController = TextEditingController();
+  TextEditingController hsnController = TextEditingController();
   TextEditingController warrantyPeriodController = TextEditingController();
   TextEditingController guaranteePeriodController = TextEditingController();
   TextEditingController vidioTypeController = TextEditingController();
@@ -237,9 +240,12 @@ class _EditProductState extends State<EditProduct>
       indicatorValue = model!.indicator.toString();
       isCODAllow = model!.codAllowed.toString();
       discountController.text = model!.vendor_discount_price.toString();
-      todaySpecialDate = model!.today_special_date.toString();
+      todaySpecialDate = model?.today_special_date  ?? '';
       discountDate = model!.discount_date.toString();
+
+
       isReturnable = model!.isReturnable.toString();
+      hsnController.text = model!.hsn.toString();
       minOrderQuantityControlller.text = model!.minimumOrderQuantity.toString();
       quantityStepSizeControlller.text = model!.quantityStepSize.toString();
       productNameControlller.text = model!.name.toString();
@@ -445,8 +451,8 @@ class _EditProductState extends State<EditProduct>
     productImage = '';
     productImageUrl = '';
     if (model != null) {
-      productImage = model!.image.toString().split("/").last;
-      productImageUrl = model!.image.toString();
+      productImage = model!.image.toString().split("eatoz").last;
+        productImageUrl = model!.image.toString();
     }
     uploadedVideoName = '';
     otherPhotos = [];
@@ -1794,6 +1800,73 @@ class _EditProductState extends State<EditProduct>
                     EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 prefixIconConstraints:
                     BoxConstraints(minWidth: 40, maxHeight: 20),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: fontColor),
+                  borderRadius: BorderRadius.circular(7.0),
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: lightWhite),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  hsnCode(){
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 10.0,
+              bottom: 8,
+            ),
+            child: Container(
+              width: width * 0.4,
+              child: Text(
+                "HSN Code :",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: black,
+                ),
+                maxLines: 2,
+              ),
+            ),
+          ),
+          Container(
+            width: width * 0.5,
+            //    height: 40,
+            padding: EdgeInsets.only(),
+            child: TextFormField(
+              onFieldSubmitted: (v) {
+                //FocusScope.of(context).requestFocus(totalAllowFocus);
+              },
+              keyboardType: TextInputType.number,
+              controller: hsnController,
+              style: TextStyle(
+                color: fontColor,
+                fontWeight: FontWeight.normal,
+              ),
+              // focusNode: totalAllowFocus,
+              textInputAction: TextInputAction.next,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              onChanged: (String? value) {
+                hsn = value;
+              },
+              validator: (val) => validateThisFieldRequered(val, context),
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: lightWhite,
+                contentPadding:
+                EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                prefixIconConstraints:
+                BoxConstraints(minWidth: 40, maxHeight: 20),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: fontColor),
                   borderRadius: BorderRadius.circular(7.0),
@@ -3419,6 +3492,7 @@ class _EditProductState extends State<EditProduct>
 // logic painding
 
   mainImage() {
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
@@ -3507,6 +3581,7 @@ class _EditProductState extends State<EditProduct>
               ),
             ),
             onTap: () async {
+
               var result = await Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -4079,7 +4154,7 @@ class _EditProductState extends State<EditProduct>
                           ? simpleProductPrice()
                           : Container(),
                       productType == 'simple_product'
-                          ? simpleProductSpecialPrice()
+                          ?  SizedBox()//simpleProductSpecialPrice()
                           : Container(),
 
                       // CheckboxListTile(
@@ -6085,6 +6160,7 @@ class _EditProductState extends State<EditProduct>
 //==============================================================================
 //=========================== Add Product API Call =============================
   List<String> varId = [];
+
   Future<void> editProductAPI(List<String> attributesValuesIds) async {
     print("now here working again ");
     _isNetworkAvail = await isNetworkAvailable();
@@ -6105,6 +6181,7 @@ class _EditProductState extends State<EditProduct>
         request.fields['category_name'] = selectedCatName.toString();
         request.fields['today_special'] = todaySpeciall == true ? "1" : "0";
         request.fields['today_special_date'] = todaySpecialDate.toString();
+        request.fields['hsn_code'] = hsnController.text;
         request.fields[ShortDescription] = sortDescription!;
         if (tagsControlller.text != "")
           request.fields[Tags] = tagsControlller.text;
@@ -6227,7 +6304,8 @@ class _EditProductState extends State<EditProduct>
           }
         }
 
-        print("reuest fieldssssss : ${request.fields}");
+        log("reuest fieldssssss : ${request.fields}");
+        print('___________${request.url}__________');
         var response = await request.send();
         var responseData = await response.stream.toBytes();
         var responseString = String.fromCharCodes(responseData);
@@ -6281,6 +6359,7 @@ class _EditProductState extends State<EditProduct>
             indicatorField(),
             discount1(),
             discountLimit(),
+            hsnCode(),
             // totalAllowedQuantity(),
             //minimumOrderQuantity(),
             //_quantityStepSize(),
@@ -6512,7 +6591,7 @@ class _EditProductState extends State<EditProduct>
                                   String yourDate = picked.toString();
                                   todaySpecialDate =
                                       convertDateTimeDisplay(yourDate);
-                                  print(todaySpecialDate);
+                                  print('${todaySpecialDate}');
                                   dateFormate = DateFormat("dd/MM/yyyy").format(
                                       DateTime.parse(todaySpecialDate ?? ""));
                                   //  discountValue = dateFormate;

@@ -199,6 +199,7 @@ class _AddProductState extends State<AddProduct> with TickerProviderStateMixin {
 //======================= TextEditingController ================================
   String? discountValue;
   TextEditingController discountController = TextEditingController();
+  TextEditingController hsnController = TextEditingController();
   String? offerLimit;
   TextEditingController productNameControlller = TextEditingController();
   TextEditingController tagsControlller = TextEditingController();
@@ -1681,6 +1682,79 @@ class _AddProductState extends State<AddProduct> with TickerProviderStateMixin {
       ),
     );
   }
+//========================= Add HSN ================================
+
+  addHsn() {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(
+              left: 10.0,
+              bottom: 8,
+            ),
+            child: Container(
+              width: width * 0.4,
+              child: Text(
+                "HSN Code :",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: black,
+                ),
+                maxLines: 2,
+              ),
+            ),
+          ),
+          Container(
+            width: width * 0.5,
+            //    height: 40,
+            padding: EdgeInsets.only(),
+            child: TextFormField(
+              readOnly: true,
+              onTap: () async {},
+              onFieldSubmitted: (v) {
+                FocusScope.of(context).requestFocus(totalAllowFocus);
+              },
+              keyboardType: TextInputType.text,
+              // controller: totalAllowController,
+              style: TextStyle(
+                color: fontColor,
+                fontWeight: FontWeight.normal,
+              ),
+              focusNode: totalAllowFocus,
+              controller: hsnController,
+              textInputAction: TextInputAction.next,
+              /*inputFormatters: [FilteringTextInputFormatter.digitsOnly],*/
+              /*onChanged: (String? value) {
+                hsnController = value;
+              }*/
+              validator: (val) => validateThisFieldRequered(val, context),
+              decoration: InputDecoration(
+               // filled: true,
+
+                fillColor: lightWhite,
+                contentPadding:
+                EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                prefixIconConstraints:
+                BoxConstraints(minWidth: 40, maxHeight: 20),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: fontColor),
+                  borderRadius: BorderRadius.circular(7.0),
+                ),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: lightWhite),
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
 
 //------------------------------------------------------------------------------
 //========================= TotalAllow Quantity ================================
@@ -5902,9 +5976,11 @@ class _AddProductState extends State<AddProduct> with TickerProviderStateMixin {
         request.fields[SellerId] = CUR_USERID.toString();
         request.fields['vendor_discount_price'] = discountController.text;
         request.fields['today_special'] = todaySpecial == true ? "1" : "0";
-        request.fields['discount_date'] = _dateValue.toString();
+        request.fields['discount_date'] = _dateValue == '' ? DateTime.now().toString() : _dateValue;
         request.fields['today_special_date'] =
             todaySpecialDate.toString() ?? "";
+        request.fields['hsn_code'] =
+            hsnController.text.toString() ?? "";
         request.fields[ProInputName] = productName.toString();
         request.fields[ShortDescription] = sortDescription.toString();
         if (tags != null) request.fields[Tags] = tags.toString();
@@ -6103,6 +6179,7 @@ class _AddProductState extends State<AddProduct> with TickerProviderStateMixin {
             indicatorField(),
             discount(),
             discountLimit(),
+            addHsn(),
             //totalAllowedQuantity(),
             // minimumOrderQuantity(),
             // _quantityStepSize(),
@@ -6545,7 +6622,7 @@ class _AddProductState extends State<AddProduct> with TickerProviderStateMixin {
               btnAnim: buttonSqueezeanimation,
               btnCntrl: buttonController,
               onBtnSelected: () async {
-                if (_dateValue == null || _dateValue == "") {
+                if ( false/*_dateValue == ""*/) {
                   setSnackbar("Please select discount date");
                 } else {
                   validateAndSubmit();

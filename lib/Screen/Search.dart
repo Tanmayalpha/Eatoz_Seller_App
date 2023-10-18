@@ -8,6 +8,8 @@ import 'package:eshopmultivendor/Helper/String.dart';
 import 'package:eshopmultivendor/Model/ProductModel/Product.dart';
 import 'package:flutter/material.dart';
 
+import 'editProduct.dart';
+
 class Search extends StatefulWidget {
   final Function? updateHome;
   Search({this.updateHome});
@@ -21,6 +23,7 @@ class _StateSearch extends State<Search> with TickerProviderStateMixin {
   int pos = 0;
   bool _isProgress = false;
   List<Product> productList = [];
+  List<ProductModel> productList2 = [];
   List<TextEditingController> _controllerList = [];
   Animation? buttonSqueezeanimation;
   AnimationController? buttonController;
@@ -40,6 +43,7 @@ class _StateSearch extends State<Search> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     productList.clear();
+    productList2.clear();
 
     notificationoffset = 0;
 
@@ -307,12 +311,21 @@ class _StateSearch extends State<Search> with TickerProviderStateMixin {
                                   ],
                                 ),
                                 InkWell(
-                                  onTap: () {
-                                    ProductDeletDialog(model.name!, model.id!);
+                                  onTap: () async{
+                                   // ProductDeletDialog(model.name!, model.id!);
+                                    bool result = await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => EditProduct(productList2[index])));
+                                    if (result == true) {
+                                      setState(() {
+                                        getProduct();
+                                      });
+                                    }
                                   },
                                   child: Card(
                                     child: Icon(
-                                      Icons.delete,
+                                      Icons.edit_outlined,
                                       color: primary,
                                       size: 20,
                                     ),
@@ -413,6 +426,7 @@ class _StateSearch extends State<Search> with TickerProviderStateMixin {
         for (int i = 0; i < tempList[j].prVarientList!.length; i++) {
           if (tempList[j].prVarientList![i].availability == "1") {
             tempList[j].selVarient = i;
+            tempList2[j].selVarient = i;
 
             break;
           }
@@ -420,8 +434,13 @@ class _StateSearch extends State<Search> with TickerProviderStateMixin {
       }
     }
     productList.addAll(tempList);
-  }
+    productList2.addAll(tempList2);
+    print('___________${productList.length}__________');
+    print('___________${productList2.length}__________');
 
+  }
+  List<ProductModel> tempList2 = [];
+  List<ProductModel> tempList1 = [];
   Future getProduct() async {
     _isNetworkAvail = await isNetworkAvailable();
     if (_isNetworkAvail) {
@@ -444,6 +463,7 @@ class _StateSearch extends State<Search> with TickerProviderStateMixin {
           };
           apiBaseHelper.postAPICall(getProductsApi, parameter).then(
             (getdata) async {
+
               bool error = getdata["error"];
               String? msg = getdata["message"];
 
@@ -456,7 +476,9 @@ class _StateSearch extends State<Search> with TickerProviderStateMixin {
                     Duration.zero,
                     () => setState(
                       () {
+                        tempList2.clear() ;
                         List mainlist = getdata['data'];
+                        var data = getdata['data'];
 
                         if (mainlist.length != 0) {
                           List<Product> items = [];
@@ -467,6 +489,9 @@ class _StateSearch extends State<Search> with TickerProviderStateMixin {
                                 .map((data) => new Product.fromJson(data))
                                 .toList(),
                           );
+                          tempList2 = (data as List)
+                              .map((data) => new ProductModel.fromJson(data))
+                              .toList();
 
                           allitems.addAll(items);
 

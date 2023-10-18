@@ -6,8 +6,9 @@ final String iosPackage = 'com.eatozfood.seller';
 // https://alphawizztest.tk/Food_on_the_way/app/v1/api/
 // final String baseUrl = 'https://foodontheways.com/seller/app/v1/api/';
 //final String baseUrl = 'https://foodontheways.com/New_food/seller/app/v1/api/';
-final String baseUrl =
-    'https://developmentalphawizz.com/eatoz_food/seller/app/v1/api/';
+// /*final String baseUrl = 'https://eatoz.in/seller/app/v1/api/';*/
+final String baseUrl = 'https://eatoz.in/seller/app/v1/api/';
+// final String baseUrl = 'https://developmentalphawizz.com/eatoz/seller/app/v1/api/';
 final String jwtKey = "f78d95e500c7ef84ee99d69d9651ff7a229979a2";
 
 //timeout limit
