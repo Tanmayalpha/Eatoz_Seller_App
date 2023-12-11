@@ -1,4 +1,4 @@
-# vendor_eshop
+# happy_hearts_pet_care_services
 
 A new Flutter project.
 
